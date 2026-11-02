@@ -1,13 +1,16 @@
 # CADON GROUP
 
-English-language corporate website preview for CADON GROUP, with a white layout and responsive desktop and mobile views.
+English-language corporate website preview for CADON GROUP, with a dark layout in the logo's blue, scroll animations and responsive desktop and mobile views.
 
 **Website:** https://cadon-group.vercel.app/
 
 ## Features
 
 - Company introduction and group overview.
-- Eight company profiles with expandable descriptions.
+- Animated hero: the logo mark draws itself, the group structure grows branch by branch.
+- Eight company profiles with expandable descriptions, linked to an interactive dot map of Europe and Canada.
+- Pinned value chain that lights up step by step as the page scrolls.
+- Scroll reveals for headings, text and figures; all motion respects reduced-motion settings.
 - Group value-chain diagram.
 - Contact form with client-side email validation and an optional message.
 - Privacy and company-information dialogs.
@@ -18,10 +21,13 @@ The contact form is a demonstration: it does not send or store enquiries. Compan
 
 ```text
 dist/
-  index.html    Page content
-  styles.css    Responsive styles
-  script.js     Form validation and dialogs
-  favicon.svg   Site icon
+  index.html      Page content (logo paths inlined for animation)
+  styles.css      Responsive styles and animations
+  script.js       Scroll animations, group map, form validation and dialogs
+  map-data.js     Pre-computed dot map of Canada and Europe
+  fonts/          Manrope (SIL Open Font License), self-hosted
+  logo-cadon.svg  Supplied CADON GROUP logo
+  favicon.svg     Site icon
 vercel.json     Static hosting configuration
 ```
 
@@ -45,4 +51,4 @@ Publishing this source repository does not by itself connect it to the existing 
 
 ## Editing
 
-Change page content in `dist/index.html`, visual styles in `dist/styles.css`, and interactions in `dist/script.js`. To enable contact requests, implement a real submission service and update the privacy notice and form messages.
+Change page content in `dist/index.html`, visual styles in `dist/styles.css`, and interactions in `dist/script.js`. Each company row carries a `data-place` code (`gr`, `nl`, `bg`, `eu`, `ca`, `ch`, `de`) that selects its country on the map. To enable contact requests, implement a real submission service and update the privacy notice and form messages.
