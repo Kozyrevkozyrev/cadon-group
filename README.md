@@ -7,7 +7,9 @@ English-language corporate website preview for CADON GROUP, with a dark layout i
 ## Features
 
 - Company introduction and group overview.
-- Animated hero: the logo mark draws itself, the group structure grows branch by branch.
+- Loader: the logo mark draws itself while the companies are counted.
+- 3D logo mark (Three.js) cut into eight pieces, one per company: whole in the hero, apart in the group section, whole again by the contact form. Falls back to a drawn group diagram without WebGL.
+- Smooth wheel scrolling (Lenis) and a cursor ring that labels company rows.
 - Eight company profiles with expandable descriptions, linked to an interactive dot map of Europe and Canada.
 - Pinned value chain that lights up step by step as the page scrolls.
 - Scroll reveals for headings, text and figures; all motion respects reduced-motion settings.
@@ -24,8 +26,11 @@ dist/
   index.html      Page content (logo paths inlined for animation)
   styles.css      Responsive styles and animations
   script.js       Scroll animations, group map, form validation and dialogs
-  map-data.js     Pre-computed dot map of Canada and Europe
-  fonts/          Manrope (SIL Open Font License), self-hosted
+  scene.js        3D logo mark and its scroll choreography
+  mark-data.js    Logo symbol cut into eight sectors for the 3D mark
+  map-data.js     Pre-computed dot map of Europe with a Canada inset
+  vendor/         Three.js 0.170, RoomEnvironment, Lenis 1.1.18
+  fonts/          Manrope and Unbounded (SIL Open Font License), self-hosted
   logo-cadon.svg  Supplied CADON GROUP logo
   favicon.svg     Site icon
 vercel.json     Static hosting configuration

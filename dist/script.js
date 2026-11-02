@@ -2,6 +2,54 @@ document.getElementById('year').textContent = new Date().getFullYear();
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+const root = document.documentElement;
+
+// Smooth scroll: inertial wheel scrolling; touch keeps the device's own scrolling
+
+let lenis = null;
+if (window.Lenis && !reduceMotion.matches) {
+  lenis = new Lenis({ lerp: .08, wheelMultiplier: .95 });
+  requestAnimationFrame(function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  });
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href^="#"]');
+    if (!link || link.classList.contains('skip-link')) return;
+    const id = link.getAttribute('href').slice(1);
+    const target = id ? document.getElementById(id) : 0;
+    if (target === null) return;
+    event.preventDefault();
+    lenis.scrollTo(target, { offset: target ? -72 : 0, duration: 1.6, easing: t => 1 - Math.pow(1 - t, 4) });
+  });
+}
+
+// Loader: the mark draws itself and counts the companies, then lifts once the fonts and the 3D mark are ready
+
+(function loader() {
+  const el = document.querySelector('.loader');
+  const count = el?.querySelector('.loader-count');
+  if (!el || root.classList.contains('is-loaded')) return el?.remove();
+  lenis?.stop();
+  const started = performance.now();
+  const duration = reduceMotion.matches ? 300 : 1300;
+  requestAnimationFrame(function tick(now) {
+    const t = Math.min(1, (now - started) / duration);
+    count.textContent = String(Math.round(8 * (1 - Math.pow(1 - t, 3)))).padStart(2, '0');
+    if (t < 1) requestAnimationFrame(tick);
+  });
+  const sceneReady = new Promise(resolve => {
+    if (window.cadonSceneReady) resolve();
+    window.addEventListener('cadon:scene-ready', resolve, { once: true });
+    setTimeout(resolve, 3000);
+  });
+  const minimum = new Promise(resolve => setTimeout(resolve, duration + 200));
+  Promise.all([document.fonts?.ready, sceneReady, minimum]).then(() => {
+    root.classList.add('is-loaded');
+    lenis?.start();
+    setTimeout(() => el.remove(), 1400);
+  });
+})();
 
 // Contact form
 
@@ -35,9 +83,11 @@ email.addEventListener('input', () => {
 document.querySelectorAll('[data-dialog]').forEach(trigger => {
   trigger.addEventListener('click', () => {
     document.getElementById(trigger.dataset.dialog).showModal();
+    lenis?.stop();
   });
 });
 document.querySelectorAll('dialog').forEach(dialog => {
+  dialog.addEventListener('close', () => lenis?.start());
   dialog.querySelectorAll('.dialog-close, .dialog-dismiss').forEach(button => {
     button.addEventListener('click', () => dialog.close());
   });
@@ -144,6 +194,39 @@ document.querySelectorAll('.company').forEach(details => {
     }
   });
 });
+
+// Cursor: a ring that trails the pointer, grows over controls and says what a company row will do
+
+if (finePointer.matches) {
+  const cursor = document.querySelector('.cursor');
+  const label = cursor.querySelector('span');
+  const pos = { x: -100, y: -100, tx: -100, ty: -100 };
+  root.classList.add('has-cursor');
+  window.addEventListener('pointermove', event => {
+    pos.tx = event.clientX;
+    pos.ty = event.clientY;
+    const row = event.target.closest('.company summary');
+    const control = event.target.closest('a, button, summary, input, textarea, label');
+    cursor.classList.toggle('is-label', Boolean(row));
+    cursor.classList.toggle('is-control', Boolean(control) && !row);
+    if (row) label.textContent = row.parentElement.open ? 'Close' : 'Open';
+  }, { passive: true });
+  document.addEventListener('pointerdown', () => cursor.classList.add('is-down'));
+  document.addEventListener('pointerup', () => cursor.classList.remove('is-down'));
+  document.addEventListener('click', event => {
+    const row = event.target.closest('.company summary');
+    if (row) setTimeout(() => { label.textContent = row.parentElement.open ? 'Close' : 'Open'; }, 0);
+  });
+  document.documentElement.addEventListener('pointerleave', () => cursor.classList.add('is-away'));
+  document.documentElement.addEventListener('pointerenter', () => cursor.classList.remove('is-away'));
+  requestAnimationFrame(function follow() {
+    const k = reduceMotion.matches ? 1 : .18;
+    pos.x += (pos.tx - pos.x) * k;
+    pos.y += (pos.ty - pos.y) * k;
+    cursor.style.transform = `translate(${pos.x.toFixed(1)}px, ${pos.y.toFixed(1)}px)`;
+    requestAnimationFrame(follow);
+  });
+}
 
 // Magnetic buttons
 
