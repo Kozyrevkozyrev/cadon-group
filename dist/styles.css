@@ -114,15 +114,15 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .hero-lower { display: grid; grid-template-columns: 1fr 1fr; gap: 12%; margin-top: clamp(56px, 9vh, 110px); align-items: center; }
 .hero-copy p { max-width: 440px; font-size: 18px; line-height: 1.65; color: var(--ink-2); }
 .hero-copy .button { margin-top: 36px; }
-.group-signature { justify-self: end; width: min(100%, 420px); text-align: center; margin-right: 10px; }
-.signature-root { font-size: 14px; letter-spacing: .12em; display: inline-block; border: 1px solid var(--line-2); background: var(--bg); padding: 16px 28px; position: relative; }
-.signature-root::after { content: ""; position: absolute; width: 1px; height: 26px; background: var(--line-2); top: 100%; left: 50%; transform-origin: top; }
-.signature-branches { position: relative; display: flex; justify-content: space-between; margin: 25px 10px 0; }
+.group-signature { --branch: 58px; --node: 14px; justify-self: end; width: min(100%, 600px); text-align: center; }
+.signature-root { font-size: 18px; letter-spacing: .14em; display: inline-block; border: 1px solid var(--line-2); background: var(--bg); padding: 24px 44px; position: relative; }
+.signature-root::after { content: ""; position: absolute; width: 1px; height: 40px; background: var(--line-2); top: 100%; left: 50%; transform-origin: top; }
+.signature-branches { position: relative; display: flex; justify-content: space-between; margin: 39px calc(var(--node) / 2) 0; }
 .signature-branches::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: var(--line-2); }
-.signature-branches i { width: 1px; height: 34px; background: var(--line-2); position: relative; transform-origin: top; }
-.signature-branches i::after { content: ""; width: 9px; height: 9px; position: absolute; bottom: -5px; left: -4px; background: var(--blue); box-shadow: 0 0 0 3px var(--bg); }
-.signature-branches i::before { content: ""; position: absolute; left: -1px; top: 0; width: 3px; height: 10px; background: var(--blue); opacity: 0; }
-.group-signature p { margin-top: 28px; color: var(--muted); font-size: 13px; }
+.signature-branches i { width: 1px; height: var(--branch); background: var(--line-2); position: relative; transform-origin: top; }
+.signature-branches i::after { content: ""; width: var(--node); height: var(--node); position: absolute; bottom: calc(var(--node) / -2); left: calc(var(--node) / -2 + .5px); background: var(--blue); box-shadow: 0 0 0 3px var(--bg); }
+.signature-branches i::before { content: ""; position: absolute; left: -1px; top: 0; width: 3px; height: 14px; background: var(--blue); opacity: 0; }
+.group-signature p { margin-top: 40px; color: var(--muted); font-size: 15px; }
 .scroll-link { display: flex; align-items: center; gap: 24px; font-size: 13px; margin-top: auto; padding-top: 72px; color: var(--muted); width: fit-content; transition: color .3s; }
 .scroll-link:hover { color: var(--ink); }
 .scroll-link span { font-size: 20px; color: var(--accent); }
@@ -130,7 +130,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 .js .hero h1 .line > * { animation: line-up 1.3s var(--ease) both; animation-delay: .15s; transition: none; transform: none; }
 .js .hero h1 .line:nth-child(2) > * { animation-delay: .3s; }
 .js .hero-in { animation: rise 1.2s var(--ease) both; animation-delay: var(--d, 0s); }
-.js.js.js .signature-root { animation: unclip 1s var(--ease) .9s both; }
+.js .signature-root { animation: unclip 1s var(--ease) .9s both; }
 .js .signature-root::after { animation: grow-y .5s var(--ease) 1.5s both; }
 .js .signature-branches::before { animation: grow-x .8s var(--ease) 1.8s both; }
 .js .signature-branches i { animation: grow-y .5s var(--ease) both; animation-delay: calc(2.2s + var(--i) * 60ms); }
@@ -145,7 +145,7 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 @keyframes grow-y { from { transform: scaleY(0); } to { transform: none; } }
 @keyframes grow-x { from { transform: scaleX(0); } to { transform: none; } }
 @keyframes pop { 0% { transform: scale(0) rotate(45deg); } 100% { transform: none; } }
-@keyframes travel { 0% { opacity: 0; transform: translateY(-10px); } 8% { opacity: 1; } 14% { opacity: 1; transform: translateY(28px); } 18%, 100% { opacity: 0; transform: translateY(28px); } }
+@keyframes travel { 0% { opacity: 0; transform: translateY(-14px); } 8% { opacity: 1; } 14% { opacity: 1; transform: translateY(calc(var(--branch) - 14px)); } 18%, 100% { opacity: 0; transform: translateY(calc(var(--branch) - 14px)); } }
 @keyframes bob { 0%, 100% { transform: none; } 50% { transform: translateY(6px); } }
 
 /* Sections */
@@ -164,7 +164,7 @@ h2 { font-size: clamp(38px, 5vw, 80px); line-height: 1.06; letter-spacing: -.05e
 .facts > div.is-in::after, html:not(.js) .facts > div::after { transform: scaleX(1); }
 .facts strong { font-size: clamp(56px, 7vw, 116px); line-height: 1; letter-spacing: -.06em; font-weight: 300; font-variant-numeric: tabular-nums; }
 .facts strong b { font-weight: inherit; }
-.facts strong > span { font-size: .55em; color: var(--accent); }
+.facts strong > span:not(.odo-digit) { font-size: .55em; color: var(--accent); }
 .facts > div > span { font-size: 14px; color: var(--muted); }
 
 .section-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 60px; margin-bottom: clamp(56px, 7vw, 96px); }
@@ -328,7 +328,7 @@ dialog .button { margin-top: 15px; }
 
 /* Numbers in a rounder face */
 .facts strong, .step-number, .portfolio-column > h3 > span, .loader-count { font-family: var(--num); font-variant-numeric: tabular-nums; }
-.facts strong { font-weight: 300; letter-spacing: -.04em; }
+.facts strong { font-weight: 300; letter-spacing: -.03em; font-size: clamp(48px, 6.2vw, 104px); }
 .step-number, .portfolio-column > h3 > span { font-weight: 400; letter-spacing: .02em; font-size: 12px; }
 
 /* Smooth scroll */
@@ -346,22 +346,13 @@ html.lenis-stopped { overflow: hidden; }
 @keyframes loader-draw { to { stroke-dashoffset: 0; } }
 .js:not(.is-loaded) .hero *, .js:not(.is-loaded) .hero *::before, .js:not(.is-loaded) .hero *::after { animation-play-state: paused !important; }
 
-/* 3D mark */
-main, .footer { position: relative; z-index: 1; }
-.mark-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; display: block; }
-.no-webgl .mark-canvas, html:not(.js) .mark-canvas { display: none; }
-.has-webgl .signature-tree { visibility: hidden; height: 0; }
-.has-webgl .mark-slot--hero { height: clamp(240px, 34vh, 380px); }
-.has-webgl .group-signature { width: min(100%, 480px); }
-.mark-slot--about, .mark-slot--contact { display: none; }
-.has-webgl .mark-slot--about { display: block; position: sticky; top: 14vh; height: 72vh; }
-.has-webgl .mark-slot--contact { display: block; height: clamp(200px, 28vh, 300px); margin-top: 48px; }
-.about-main .about-copy { margin-top: 48px; }
-.about-grid { grid-template-columns: minmax(0, 1fr); }
-.has-webgl .about-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6%; align-items: start; }
-.about-main .facts { margin-top: clamp(56px, 6vw, 96px); grid-template-columns: 1fr; gap: 0; }
-.about-main .facts > div { flex-direction: row; align-items: baseline; justify-content: space-between; padding: 26px 0 22px; }
-.about-main .facts strong { font-size: clamp(44px, 4.6vw, 76px); }
+/* Odometer: each digit rolls through 0–9 to its value */
+.odo { display: inline-flex; }
+.odo-digit { display: inline-block; height: 1em; line-height: 1; overflow: hidden; }
+.odo-strip { display: flex; flex-direction: column; transform: translateY(0); transition: transform var(--odo-time, 2s) cubic-bezier(.22, 1, .36, 1) var(--odo-delay, 0s); }
+.odo-strip span { display: block; height: 1em; line-height: 1; }
+.is-in .odo-strip { transform: translateY(calc(var(--odo-stop) * -1em)); }
+.facts strong { line-height: 1; }
 
 /* Cursor */
 .cursor { display: none; }
@@ -375,16 +366,6 @@ main, .footer { position: relative; z-index: 1; }
 .cursor.is-label.is-down::before { transform: scale(2); }
 .cursor.is-away { opacity: 0; }
 
-@media (max-width: 1050px) {
-  .has-webgl .about-grid { gap: 4%; }
-}
-@media (max-width: 720px) {
-  .has-webgl .about-grid { grid-template-columns: 1fr; gap: 0; }
-  .has-webgl .mark-slot--about { position: relative; top: auto; height: 86vw; margin-top: 24px; }
-  .has-webgl .mark-slot--hero { height: 72vw; }
-  .has-webgl .mark-slot--contact { height: 56vw; margin-top: 24px; }
-  .about-main .facts strong { font-size: 48px; }
-}
 
 @media (min-width: 1600px) { .hero { padding-top: calc(var(--header) + 140px); } }
 
@@ -416,9 +397,11 @@ main, .footer { position: relative; z-index: 1; }
   .hero h1 { font-size: clamp(25px, 7.6vw, 54px); letter-spacing: -.05em; line-height: 1.16; }
   .hero-lower { grid-template-columns: 1fr; gap: 64px; margin-top: 36px; }
   .hero-copy p { font-size: 17px; }
-  .group-signature { justify-self: center; width: 88%; max-width: 320px; margin: 0 auto; }
-  .signature-root { padding: 12px 20px; font-size: 13px; }
-  .signature-branches i { height: 26px; }
+  .group-signature { --branch: 34px; --node: 10px; justify-self: center; width: 94%; max-width: 380px; margin: 0 auto; }
+  .signature-root { padding: 15px 26px; font-size: 14px; }
+  .signature-root::after { height: 28px; }
+  .signature-branches { margin-top: 27px; }
+  .group-signature p { margin-top: 30px; font-size: 14px; }
   .scroll-link { padding-top: 56px; }
   .section { padding-top: 104px; }
   .section-label { font-size: 13px; letter-spacing: .08em; margin-bottom: 48px; flex-wrap: wrap; gap: 6px 20px; }

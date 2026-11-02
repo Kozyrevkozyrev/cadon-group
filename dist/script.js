@@ -24,7 +24,7 @@ if (window.Lenis && !reduceMotion.matches) {
   });
 }
 
-// Loader: the mark draws itself and counts the companies, then lifts once the fonts and the 3D mark are ready
+// Loader: the mark draws itself and counts the companies, then lifts once the fonts are ready
 
 (function loader() {
   const el = document.querySelector('.loader');
@@ -38,13 +38,8 @@ if (window.Lenis && !reduceMotion.matches) {
     count.textContent = String(Math.round(8 * (1 - Math.pow(1 - t, 3)))).padStart(2, '0');
     if (t < 1) requestAnimationFrame(tick);
   });
-  const sceneReady = new Promise(resolve => {
-    if (window.cadonSceneReady) resolve();
-    window.addEventListener('cadon:scene-ready', resolve, { once: true });
-    setTimeout(resolve, 3000);
-  });
   const minimum = new Promise(resolve => setTimeout(resolve, duration + 200));
-  Promise.all([document.fonts?.ready, sceneReady, minimum]).then(() => {
+  Promise.all([document.fonts?.ready, minimum]).then(() => {
     root.classList.add('is-loaded');
     lenis?.start();
     setTimeout(() => el.remove(), 1400);
@@ -104,29 +99,25 @@ document.querySelectorAll('.stagger').forEach(group => {
   group.querySelectorAll(':scope > .reveal').forEach((item, i) => item.style.setProperty('--i', i));
 });
 
-const counters = new WeakSet();
-function countUp(el) {
-  if (counters.has(el)) return;
-  counters.add(el);
-  const to = Number(el.dataset.count);
-  const from = Number(el.dataset.from || 0);
-  const pad = Number(el.dataset.pad || 0);
-  const show = n => { el.textContent = String(Math.round(n)).padStart(pad, '0'); };
-  const start = performance.now();
-  const duration = 1800;
-  show(from);
-  requestAnimationFrame(function tick(now) {
-    const t = Math.min(1, (now - start) / duration);
-    show(from + (to - from) * (1 - Math.pow(1 - t, 4)));
-    if (t < 1) requestAnimationFrame(tick);
-  });
-}
+// Odometer: every digit of a [data-count] number is a strip of 0–9 that rolls to its value when the number comes into view
+
+document.querySelectorAll('[data-count]').forEach(el => {
+  const value = el.dataset.count;
+  el.setAttribute('aria-label', value);
+  el.classList.add('odo');
+  el.innerHTML = [...value].map((digit, i, all) => {
+    // the leftmost digits turn over more often, like a real counter
+    const turns = reduceMotion.matches ? 0 : all.length - i;
+    const stop = turns * 10 + Number(digit);
+    const strip = Array.from({ length: stop + 1 }, (_, n) => `<span>${n % 10}</span>`).join('');
+    return `<span class="odo-digit" aria-hidden="true"><span class="odo-strip" style="--odo-stop:${stop};--odo-delay:${(i * .12).toFixed(2)}s;--odo-time:${reduceMotion.matches ? .6 : 1.8 + i * .25}s">${strip}</span></span>`;
+  }).join('');
+});
 
 const revealObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (!entry.isIntersecting) return;
     entry.target.classList.add('is-in');
-    entry.target.querySelectorAll('[data-count]').forEach(countUp);
     revealObserver.unobserve(entry.target);
   });
 }, { rootMargin: '0px 0px -12% 0px', threshold: .12 });
